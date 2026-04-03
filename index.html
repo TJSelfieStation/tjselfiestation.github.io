@@ -131,6 +131,15 @@ h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-
 .card-list li.dim{color:rgba(245,240,232,0.3)}
 .card-list li.dim::before{color:rgba(201,168,76,0.25)}
 
+
+/* PACKAGE CATEGORY GRIDS - RESPONSIVE */
+@media(max-width:1024px){
+  [style*="grid-template-columns:repeat(4,1fr)"]{grid-template-columns:repeat(2,1fr)!important}
+}
+@media(max-width:600px){
+  [style*="grid-template-columns:repeat(4,1fr)"]{grid-template-columns:1fr!important}
+}
+
 /* EVENTS */
 #events{padding:7rem 4rem;background:var(--deep);text-align:center}
 #events h2{margin-bottom:0.8rem}
@@ -543,54 +552,158 @@ body::before {
   <div class="packages-top">
     <div class="section-label centered">Pricing</div>
     <h2>Simple, Honest Pricing</h2>
+    <p style="color:var(--gray);margin-top:0.8rem;font-size:0.95rem;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.8">Two booth experiences. Eight packages. Every event covered.</p>
   </div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-name">Digital</div>
-      <div class="card-sub">Perfect for intimate gatherings</div>
-      <div class="card-price">$85 <sub>/ hour</sub></div>
-      <div class="card-note">2 hour minimum · Boston & surrounding areas</div>
-      <ul class="card-list">
-        <li>Unlimited digital photos</li>
-        <li>Text & email delivery</li>
-        <li>Full online gallery</li>
-        <li>Props included</li>
-        <li>Custom backdrop</li>
-        <li>Professional attendant</li>
-        <li class="dim">Prints not included</li>
-      </ul>
-      <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+
+  <!-- IPAD BOOTH -->
+  <div style="max-width:1200px;margin:0 auto 5rem">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem">
+      <div style="font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold)">📱 iPad Booth</div>
+      <div style="flex:1;height:1px;background:rgba(201,168,76,0.18)"></div>
     </div>
-    <div class="card star">
-      <div class="star-pill">Most Popular</div>
-      <div class="card-name">Prints + Digital</div>
-      <div class="card-sub">The full experience</div>
-      <div class="card-price">Custom <sub>quote</sub></div>
-      <div class="card-note">Price based on party size & hours</div>
-      <ul class="card-list">
-        <li>Instant 4×6 prints</li>
-        <li>Unlimited digital photos</li>
-        <li>Text & email delivery</li>
-        <li>Full online gallery</li>
-        <li>Props included</li>
-        <li>Custom backdrop</li>
-        <li>Professional attendant</li>
-      </ul>
-      <a href="sms:7816328313&body=QUOTE" class="btn-gold" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem">
+
+      <div class="card">
+        <div class="card-name">Classic</div>
+        <div class="card-sub">2 hours · Casual events</div>
+        <div class="card-price">$250</div>
+        <div class="card-note">Great for birthdays &amp; baby showers</div>
+        <ul class="card-list">
+          <li>2 hours of coverage</li>
+          <li>1 photo template</li>
+          <li>Standard props</li>
+          <li>Digital photos</li>
+          <li>Choice of backdrop</li>
+          <li>Professional attendant</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card">
+        <div class="card-name">Classic+</div>
+        <div class="card-sub">4 hours · Longer events</div>
+        <div class="card-price">$350</div>
+        <div class="card-note">More time, same great setup</div>
+        <ul class="card-list">
+          <li>4 hours of coverage</li>
+          <li>1 photo template</li>
+          <li>Standard props</li>
+          <li>Digital photos</li>
+          <li>Choice of backdrop</li>
+          <li>Professional attendant</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card star">
+        <div class="star-pill">Best iPad Package</div>
+        <div class="card-name">Elite</div>
+        <div class="card-sub">2 hours · Themed events</div>
+        <div class="card-price">$375</div>
+        <div class="card-note">Personalized from start to finish</div>
+        <ul class="card-list">
+          <li>2 hours of coverage</li>
+          <li>Multiple templates</li>
+          <li>Tailored props</li>
+          <li>Full digital gallery</li>
+          <li>Choice of backdrop</li>
+          <li>Professional attendant</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-gold" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card">
+        <div class="card-name">Elite+</div>
+        <div class="card-sub">4 hours · Weddings &amp; quinces</div>
+        <div class="card-price">$450</div>
+        <div class="card-note">Full customization, full coverage</div>
+        <ul class="card-list">
+          <li>4 hours of coverage</li>
+          <li>Multiple templates</li>
+          <li>Tailored props</li>
+          <li>Full digital gallery</li>
+          <li>Choice of backdrop</li>
+          <li>Professional attendant</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
     </div>
-    <div class="card">
-      <div class="card-name">Add-Ons</div>
-      <div class="card-sub">Customize any package</div>
-      <div class="card-price">Ask <sub>us</sub></div>
-      <div class="card-note">Available with any booking</div>
-      <ul class="card-list">
-        <li>Premium prop packages</li>
-        <li>Themed backdrops</li>
-        <li>Custom print overlays</li>
-        <li>Extended hours</li>
-        <li>Additional attendant</li>
-      </ul>
-      <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Learn More</a>
+  </div>
+
+  <!-- STUDIO BOOTH -->
+  <div style="max-width:1200px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem">
+      <div style="font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold)">📸 Studio Booth — Canon EOS R8</div>
+      <div style="flex:1;height:1px;background:rgba(201,168,76,0.18)"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem">
+
+      <div class="card">
+        <div class="card-name">Premium</div>
+        <div class="card-sub">3 hours · DSLR quality</div>
+        <div class="card-price">$449</div>
+        <div class="card-note">Noticeably sharper than iPad</div>
+        <ul class="card-list">
+          <li>3 hours of coverage</li>
+          <li>Canon EOS R8 camera</li>
+          <li>1 photo template</li>
+          <li>Standard props</li>
+          <li>Digital photos</li>
+          <li>Choice of backdrop</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card">
+        <div class="card-name">Premium+</div>
+        <div class="card-sub">4 hours · Extended coverage</div>
+        <div class="card-price">$549</div>
+        <div class="card-note">Canon R8 quality all night long</div>
+        <ul class="card-list">
+          <li>4 hours of coverage</li>
+          <li>Canon EOS R8 camera</li>
+          <li>1 photo template</li>
+          <li>Standard props</li>
+          <li>Digital photos</li>
+          <li>Choice of backdrop</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card star">
+        <div class="star-pill">Flagship Package</div>
+        <div class="card-name">Signature</div>
+        <div class="card-sub">3 hours · Upscale events</div>
+        <div class="card-price">$549</div>
+        <div class="card-note">Full Canon R8 customization</div>
+        <ul class="card-list">
+          <li>3 hours of coverage</li>
+          <li>Canon EOS R8 camera</li>
+          <li>Multiple templates</li>
+          <li>Tailored props</li>
+          <li>Full digital gallery</li>
+          <li>Choice of backdrop</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-gold" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
+      <div class="card">
+        <div class="card-name">Signature+</div>
+        <div class="card-sub">4 hours · Weddings &amp; galas</div>
+        <div class="card-price">$649</div>
+        <div class="card-note">The best we offer — period</div>
+        <ul class="card-list">
+          <li>4 hours of coverage</li>
+          <li>Canon EOS R8 camera</li>
+          <li>Multiple templates</li>
+          <li>Tailored props</li>
+          <li>Full digital gallery</li>
+          <li>Choice of backdrop</li>
+        </ul>
+        <a href="sms:7816328313&body=QUOTE" class="btn-ghost" style="display:block;text-align:center;font-size:0.76rem;padding:0.85rem">Get a Quote</a>
+      </div>
+
     </div>
   </div>
 </section>
