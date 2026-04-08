@@ -198,7 +198,7 @@ const PKGS = [
   {booth:'studio',hrs:4,price:649,name:'Signature+',tag:'Best We Offer',tagline:'The full experience — the best we offer, period',feats:['4 hrs of coverage','Canon EOS R8','Multiple templates','Tailored props','Full digital gallery','Choice of backdrop']},
 ];
 
-const A = {eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,prints:null,guests:null,name:'',phone:'',email:'',notes:''};
+const A = {eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,guests:null,name:'',phone:'',email:'',notes:''};
 let step = 0;
 const TOTAL = 4;
 const EL = {wedding:'Wedding / Gala',quince:'Quinceañera / Sweet 16',birthday:'Birthday Party',corporate:'Corporate Event',grad:'Graduation',other:'Other Celebration'};
@@ -249,10 +249,6 @@ function renderStep1(){
 }
 
 function renderStep2(){
-  const prints=[
-    {id:'yes',name:'Prints + Digital',sub:'Guests walk away with a physical photo'},
-    {id:'no',name:'Digital Only',sub:'Full gallery delivered after the event'},
-  ];
   const counts=[
     {id:'1-50',name:'1 – 50',sub:'Intimate'},
     {id:'51-100',name:'51 – 100',sub:'Medium'},
@@ -269,11 +265,6 @@ function renderStep2(){
       </div>
       <div class="field"><label for="f_venue">Venue / Location *</label>
         <input id="f_venue" type="text" placeholder="Venue name + city  (e.g. The Grand Hall, Lynn)" value="${A.venue}" oninput="sf('venue',this.value);chk2()"></div>
-      <span class="opt-sub-label">Print Preference *</span>
-      <div class="opt-grid g2">${prints.map(p=>`
-        <button class="tile${A.prints===p.id?' sel':''}" data-val="${p.id}" data-group="prints" onclick="pick('prints','${p.id}',this);chk2()">
-          <span><span class="tile-name" style="font-size:.82rem">${p.name}</span><span class="tile-sub">${p.sub}</span></span>
-        </button>`).join('')}</div>
       <span class="opt-sub-label">Estimated Guest Count *</span>
       <div class="opt-grid g4">${counts.map(c=>`
         <button class="tile compact${A.guests===c.id?' sel':''}" data-val="${c.id}" data-group="guests" onclick="pick('guests','${c.id}',this);chk2()">
@@ -314,7 +305,7 @@ function render(){
   if(!s) return;
 
   const isLast = step === TOTAL - 1;
-  let nd = step===0?!A.eventType:step===1?!(A.booth&&A.hrs):step===2?!(A.date&&A.startTime&&A.venue.trim()&&A.prints&&A.guests):false;
+  let nd = step===0?!A.eventType:step===1?!(A.booth&&A.hrs):step===2?!(A.date&&A.startTime&&A.venue.trim()&&A.guests):false;
 
   document.getElementById('quiz').innerHTML = `
     <div class="card">
@@ -340,11 +331,11 @@ function pick(key,val,el){
   if(step===1){const b=document.getElementById('btnNext');if(b)b.disabled=!(A.booth&&A.hrs);}
 }
 function sf(k,v){A[k]=v}
-function chk2(){const ok=A.date&&A.startTime&&A.venue.trim()&&A.prints&&A.guests;const b=document.getElementById('btnNext');if(b)b.disabled=!ok}
+function chk2(){const ok=A.date&&A.startTime&&A.venue.trim()&&A.guests;const b=document.getElementById('btnNext');if(b)b.disabled=!ok}
 function chk3(){const ok=A.name.trim()&&A.phone.trim();const b=document.getElementById('btnSubmit');if(b)b.disabled=!ok}
 function advance(){step++;render();window.scrollTo({top:0,behavior:'smooth'})}
 function goBack(){step--;render();window.scrollTo({top:0,behavior:'smooth'})}
-function restart(){step=0;Object.assign(A,{eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,prints:null,guests:null,name:'',phone:'',email:'',notes:''});render();window.scrollTo({top:0,behavior:'smooth'})}
+function restart(){step=0;Object.assign(A,{eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,guests:null,name:'',phone:'',email:'',notes:''});render();window.scrollTo({top:0,behavior:'smooth'})}
 
 /* ── PACKAGE MATCH ── */
 function matchPkg(){
@@ -385,7 +376,7 @@ async function submitForm(){
         'Venue':A.venue,
         'Booth':BL[A.booth]||A.booth,
         'Duration':`${A.hrs} hours`,
-        'Prints':A.prints==='yes'?'Yes — Prints + Digital':'Digital Only',
+        'Guests': A.guests,
         'Guest Count':A.guests,
         'Recommended Package':pkg?`${pkg.name} — $${pkg.price}`:'To be determined',
         'Notes':A.notes||'(none)',
@@ -421,7 +412,7 @@ function showSuccess(pkg){
 /* ── ERROR FALLBACK ── */
 function showError(pkg,msg){
   updateProgress(true);
-  const lines=[`Hi Anthony! Quote request from your website.`,'',`Name: ${A.name}`,`Phone: ${A.phone}`,`Event: ${EL[A.eventType]||A.eventType}`,`Date: ${fmtDate(A.date)} at ${fmtTime(A.startTime)}`,`Venue: ${A.venue}`,`Booth: ${BL[A.booth]||A.booth}`,`Duration: ${A.hrs} hours`,`Prints: ${A.prints==='yes'?'Yes — Prints + Digital':'Digital Only'}`,`Guests: ${A.guests}`,pkg?`Package: ${pkg.name} — $${pkg.price}`:'',A.notes?`Notes: ${A.notes}`:''].filter(Boolean).join('\n').trim();
+  const lines=[`Hi Anthony! Quote request from your website.`,'',`Name: ${A.name}`,`Phone: ${A.phone}`,`Event: ${EL[A.eventType]||A.eventType}`,`Date: ${fmtDate(A.date)} at ${fmtTime(A.startTime)}`,`Venue: ${A.venue}`,`Booth: ${BL[A.booth]||A.booth}`,`Duration: ${A.hrs} hours`,`Guests: ${A.guests}`,pkg?`Package: ${pkg.name} — $${pkg.price}`:'',A.notes?`Notes: ${A.notes}`:''].filter(Boolean).join('\n').trim();
   const isA=/android/i.test(navigator.userAgent);
   const sms=`sms:+17816328313${isA?'?':'&'}body=${encodeURIComponent(lines)}`;
   const mail=`mailto:tjselfiestation@gmail.com?subject=${encodeURIComponent('Quote Request — '+A.name)}&body=${encodeURIComponent(lines)}`;
