@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TJ Selfie Station – Agreement Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!--
+╔══════════════════════════════════════════════════════╗
+║       TJ SELFIE STATION — AGREEMENT BUILDER          ║
+║    ONE-TIME EMAILJS SETUP (free, ~5 minutes)         ║
+╠══════════════════════════════════════════════════════╣
+║  1. Go to https://emailjs.com → free account         ║
+║  2. Email Services → Add Service → Gmail             ║
+║     → connect tjselfiestation@gmail.com              ║
+║     → copy the Service ID                            ║
+║  3. Email Templates → Create Template                ║
+║                                                      ║
+║  TEMPLATE A (client invitation):                     ║
+║    Subject: Your TJ Selfie Station Agreement ✍️      ║
+║    Body: set to {{{email_html}}}                     ║
+║    (triple braces = renders as real HTML email)      ║
+║                                                      ║
+║  TEMPLATE B (you get notified when signed):          ║
+║    Subject: ✍️ Signed – {{client_name}} | {{event_date}} ║
+║    Body:                                             ║
+║      Signed by: {{client_name}}                      ║
+║      Email: {{client_email}} · Phone: {{client_phone}}║
+║      Date: {{event_date}} · {{event_type}}           ║
+║      Venue: {{venue}}                                ║
+║      Time: {{start_time}} · {{duration}}             ║
+║      Package: {{package}}                            ║
+║      Total: ${{total}} · Deposit: ${{deposit}}       ║
+║      Balance due: ${{balance}}                       ║
+║      Notes: {{notes}}                                ║
+║      Signed at: {{signed_at}}                        ║
+║                                                      ║
+║  4. Account → API Keys → copy Public Key             ║
+║  5. Paste 3 values into CONFIG below                 ║
+╚══════════════════════════════════════════════════════╝
+-->
+<style>
+:root{--gold:#C9A84C;--gold-light:#E2C97E;--gold-dim:#7a6230;--black:#090909;--surface:#131313;--surface2:#1a1a1a;--surface3:#202020;--border:rgba(201,168,76,0.16);--text:#e8e0d0;--text-dim:#706858;--green:#6fcf97;--red:#e07070;--blue:#7eb8f7;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--black);color:var(--text);font-family:'Montserrat',sans-serif;font-weight:300;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.4);}
+.tb-brand{display:flex;align-items:center;gap:12px;}
+.tb-logo{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold);font-weight:600;}
+.tb-name{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);font-weight:600;}
+.tb-sub{font-size:0.58rem;letter-spacing:0.12em;color:var(--text-dim);margin-top:1px;}
+.tb-badge{font-size:0.56rem;letter-spacing:0.18em;text-transform:uppercase;background:rgba(201,168,76,0.07);border:1px solid rgba(201,168,76,0.18);color:var(--gold-dim);padding:5px 12px;border-radius:20px;}
+.setup-banner{background:rgba(126,184,247,0.05);border:1px solid rgba(126,184,247,0.18);border-radius:10px;padding:16px 20px;margin:20px 36px 0;display:flex;align-items:flex-start;gap:14px;}
+.setup-banner.gone{display:none;}
+.setup-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px;}
+.setup-txt{flex:1;}
+.setup-txt strong{display:block;font-size:0.74rem;font-weight:600;color:var(--blue);margin-bottom:4px;}
+.setup-txt p{font-size:0.7rem;color:#7a9aaa;line-height:1.7;}
+.setup-txt a{color:var(--blue);text-decoration:none;}
+.setup-dismiss{background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:0.85rem;padding:2px 4px;flex-shrink:0;}
+.layout{display:grid;grid-template-columns:1fr 400px;min-height:calc(100vh - 65px);}
+.form-panel{padding:24px 36px;overflow-y:auto;}
+.output-panel{background:var(--surface);border-left:1px solid var(--border);padding:24px;display:flex;flex-direction:column;gap:16px;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;}
+.section{margin-bottom:26px;}
+.sec-head{font-size:0.56rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.sec-head::after{content:'';flex:1;height:1px;background:var(--border);}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.fg .full{grid-column:1/-1;}
+.field{display:flex;flex-direction:column;gap:5px;}
+label{font-size:0.56rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);font-weight:500;}
+input,select,textarea{background:var(--surface2);border:1px solid rgba(255,255,255,0.07);border-radius:7px;padding:11px 14px;color:var(--text);font-family:'Montserrat',sans-serif;font-size:0.82rem;font-weight:400;outline:none;transition:border-color 0.2s,box-shadow 0.2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:rgba(201,168,76,0.4);box-shadow:0 0 0 3px rgba(201,168,76,0.06);}
+select{cursor:pointer;}select option{background:#1a1a1a;}
+textarea{resize:vertical;min-height:68px;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.5);}
+.cat-header{font-size:0.55rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);font-weight:500;margin:14px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.pkg-card{background:var(--surface3);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:13px 15px;margin-bottom:7px;cursor:pointer;transition:all 0.18s;display:flex;align-items:center;gap:13px;}
+.pkg-card:hover{border-color:var(--gold-dim);}
+.pkg-card.sel{border-color:var(--gold);background:rgba(201,168,76,0.05);}
+.pkg-radio{width:14px;height:14px;border-radius:50%;border:2px solid var(--text-dim);flex-shrink:0;transition:all 0.18s;}
+.pkg-card.sel .pkg-radio{border-color:var(--gold);background:var(--gold);}
+.pkg-info{flex:1;}
+.pkg-nm{font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:1px;}
+.pkg-sb{font-size:0.64rem;color:var(--text-dim);}
+.pkg-pr{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--gold-light);font-weight:600;}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.price-row:last-child{border:none;}
+.price-row label{font-size:0.66rem;letter-spacing:0.05em;text-transform:none;color:var(--text-dim);}
+.price-row input{width:100px;text-align:right;padding:7px 10px;font-size:0.82rem;}
+.out-label{font-size:0.56rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px;}
+.send-btn{width:100%;padding:17px;background:linear-gradient(135deg,#6b4c1a,var(--gold),var(--gold-light));color:#060606;border:none;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;cursor:pointer;transition:all 0.22s;box-shadow:0 6px 28px rgba(201,168,76,0.26);position:relative;overflow:hidden;}
+.send-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 50%,rgba(255,255,255,0.1));}
+.send-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 10px 36px rgba(201,168,76,0.36);}
+.send-btn:disabled{opacity:0.35;cursor:not-allowed;}
+.sent-box{display:none;background:rgba(111,207,151,0.08);border:1px solid rgba(111,207,151,0.22);border-radius:8px;padding:13px 16px;text-align:center;margin-top:8px;}
+.sent-box.show{display:block;}
+.sent-box strong{display:block;color:var(--green);font-size:0.78rem;margin-bottom:3px;}
+.sent-box span{font-size:0.68rem;color:#6a9a78;}
+.url-box{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:0.6rem;color:var(--text-dim);word-break:break-all;line-height:1.6;min-height:48px;font-family:monospace;}
+.url-box.ready{color:#8a8070;border-color:rgba(201,168,76,0.25);}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px;}
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 12px;border-radius:7px;border:none;font-family:'Montserrat',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.18s;text-decoration:none;}
+.btn-cp{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid rgba(201,168,76,0.2);}
+.btn-cp:hover{background:rgba(201,168,76,0.14);}
+.btn-ol{background:transparent;color:var(--text-dim);border:1px solid rgba(255,255,255,0.08);}
+.btn-ol:hover{border-color:var(--gold-dim);color:var(--gold);}
+.btn:disabled,.btn[style*="pointer-events:none"]{opacity:0.28!important;cursor:not-allowed;}
+.divider{height:1px;background:var(--border);}
+.sum-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:0.72rem;color:var(--text-dim);}
+.sr{display:flex;justify-content:space-between;padding:3px 0;}
+.sr strong{color:var(--text);}
+.hint{text-align:center;padding:16px 10px;font-size:0.68rem;color:var(--text-dim);line-height:1.7;}
+.footer-note{margin-top:auto;padding-top:12px;border-top:1px solid var(--border);font-size:0.58rem;color:var(--text-dim);line-height:1.7;}
+.footer-note strong{color:var(--gold);}
+.cfg-pill{display:flex;align-items:center;gap:8px;font-size:0.6rem;padding:8px 12px;border-radius:7px;border:1px solid;}
+.cfg-pill.ok{color:var(--green);border-color:rgba(111,207,151,0.2);background:rgba(111,207,151,0.05);}
+.cfg-pill.warn{color:#f0c060;border-color:rgba(240,192,96,0.2);background:rgba(240,192,96,0.05);}
+.cfg-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.cfg-pill.ok .cfg-dot{background:var(--green);}
+.cfg-pill.warn .cfg-dot{background:#f0c060;}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(14px);padding:9px 20px;border-radius:20px;font-size:0.66rem;font-weight:600;letter-spacing:0.1em;opacity:0;transition:all 0.28s;pointer-events:none;z-index:999;}
+.toast.g{background:var(--green);color:#040a06;}
+.toast.a{background:var(--gold);color:#060604;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:880px){.layout{grid-template-columns:1fr;}.output-panel{position:static;height:auto;border-left:none;border-top:1px solid var(--border);}.form-panel{padding:16px 18px;}.setup-banner{margin:14px 18px 0;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">TJ</div>
+    <div><div class="tb-name">TJ Selfie Station</div><div class="tb-sub">Agreement Builder</div></div>
+  </div>
+  <div class="tb-badge">🔒 Your Private Tool</div>
+</div>
+
+<div class="setup-banner" id="setupBanner">
+  <span class="setup-icon">⚙️</span>
+  <div class="setup-txt">
+    <strong>One-time EmailJS setup needed (free)</strong>
+    <p>Create a free account at <a href="https://emailjs.com" target="_blank">emailjs.com</a>, connect your Gmail, create the two templates from the comments at the top of this file, then paste your 3 keys into the CONFIG section in the script. This banner disappears once you're configured.</p>
+  </div>
+  <button class="setup-dismiss" onclick="document.getElementById('setupBanner').classList.add('gone')">✕</button>
+</div>
+
+<div class="layout">
+  <div class="form-panel">
+
+    <div class="section">
+      <div class="sec-head">Client Information</div>
+      <div class="fg">
+        <div class="field full"><label>Full Name *</label><input id="fName" type="text" placeholder="e.g. Michelle Sarr" oninput="refresh()"/></div>
+        <div class="field"><label>Phone</label><input id="fPhone" type="tel" placeholder="(978) 000-0000" oninput="refresh()"/></div>
+        <div class="field"><label>Email *</label><input id="fEmail" type="email" placeholder="client@email.com" oninput="refresh()"/></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">Event Details</div>
+      <div class="fg">
+        <div class="field"><label>Event Date *</label><input id="fDate" type="date" oninput="refresh()"/></div>
+        <div class="field"><label>Event Type</label>
+          <select id="fType" onchange="refresh()">
+            <option>Birthday Party</option><option>Sweet 16</option><option>Quinceanera</option>
+            <option>Baby Shower</option><option>Bridal Shower</option><option>Wedding</option>
+            <option>Corporate Event</option><option>Graduation Party</option><option>Holiday Party</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field full"><label>Venue / Address *</label><input id="fVenue" type="text" placeholder="73 Billerica St, Lowell MA 01851" oninput="refresh()"/></div>
+        <div class="field"><label>Start Time</label><input id="fTime" type="time" value="16:00" oninput="refresh()"/></div>
+        <div class="field"><label>Duration</label>
+          <select id="fDur" onchange="refresh()">
+            <option>1 Hour</option><option selected>2 Hours</option><option>3 Hours</option><option>4 Hours</option><option>5 Hours</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">Package</div>
+      <div id="pkgList"></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">Pricing</div>
+      <div class="price-row"><label>Total</label><input id="fTotal" type="number" min="0" oninput="autoBalance();refresh()"/></div>
+      <div class="price-row"><label>Deposit Paid</label><input id="fDeposit" type="number" min="0" oninput="autoBalance();refresh()"/></div>
+      <div class="price-row"><label>Balance Due at Setup</label><input id="fBalance" type="number" readonly style="opacity:0.45;cursor:not-allowed"/></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">Notes / Add-Ons <span style="font-size:0.54rem;color:var(--text-dim);text-transform:none;letter-spacing:0;font-weight:300;">(optional)</span></div>
+      <textarea id="fNotes" placeholder="e.g. Rose gold backdrop, outdoor patio confirmed, glam props…" oninput="refresh()"></textarea>
+    </div>
+
+  </div>
+
+  <div class="output-panel">
+
+    <div class="cfg-pill" id="cfgPill">
+      <div class="cfg-dot"></div>
+      <span id="cfgTxt">Checking EmailJS…</span>
+    </div>
+
+    <div>
+      <div class="out-label">Send to Client</div>
+      <button class="send-btn" id="sendBtn" onclick="sendToClient()" disabled>✉ Send Agreement to Client</button>
+      <div class="sent-box" id="sentBox">
+        <strong>✓ Agreement sent!</strong>
+        <span id="sentTo">Client will receive it shortly.</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="out-label">Or share manually</div>
+      <div class="url-box" id="urlBox">Fill in name, date &amp; venue to generate link…</div>
+      <div class="btn-row">
+        <button class="btn btn-cp" id="copyBtn" onclick="copyLink()" disabled>📋 Copy Link</button>
+        <a class="btn btn-ol" id="prevBtn" href="#" target="_blank" style="pointer-events:none;opacity:0.28;">👁 Preview</a>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn-ol" id="smsBtn" href="#" style="pointer-events:none;opacity:0.28;">💬 Text Link</a>
+        <a class="btn btn-ol" id="mlBtn" href="#" style="pointer-events:none;opacity:0.28;">✉ Gmail</a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="out-label">Booking Summary</div>
+      <div class="hint" id="sumHint">Summary appears once required fields are filled.</div>
+      <div class="sum-box" id="sumBox" style="display:none;">
+        <div class="sr"><span>Client</span><strong id="s-name">—</strong></div>
+        <div class="sr"><span>Email</span><strong id="s-email">—</strong></div>
+        <div class="sr"><span>Date</span><strong id="s-date">—</strong></div>
+        <div class="sr"><span>Package</span><strong id="s-pkg">—</strong></div>
+        <div class="sr"><span>Total</span><strong id="s-total">—</strong></div>
+        <div class="sr"><span>Balance Due</span><strong id="s-bal" style="color:var(--red)">—</strong></div>
+      </div>
+    </div>
+
+    <div class="footer-note">
+      When client signs → you're notified at <strong>tjselfiestation@gmail.com</strong>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// CONFIG — paste your EmailJS values here
+// ══════════════════════════════════════════════════════
+const CFG = {
+  PUBLIC_KEY:      'YOUR_PUBLIC_KEY',       // Account → API Keys
+  SERVICE_ID:      'YOUR_SERVICE_ID',       // Email Services
+  INVITE_TEMPLATE: 'YOUR_INVITE_TEMPLATE',  // Template A (to client)
+};
+
+emailjs.init({ publicKey: CFG.PUBLIC_KEY });
+const isConfigured = !Object.values(CFG).some(v => v.startsWith('YOUR_'));
+
+const pill = document.getElementById('cfgPill');
+if (isConfigured) {
+  pill.className = 'cfg-pill ok';
+  document.getElementById('cfgTxt').textContent = 'EmailJS connected — ready to send';
+  document.getElementById('setupBanner').classList.add('gone');
+} else {
+  pill.className = 'cfg-pill warn';
+  document.getElementById('cfgTxt').textContent = 'EmailJS not set up yet — see guide above';
+}
+
+// ══════════════════════════════════════════════════════
+// PACKAGES
+// ══════════════════════════════════════════════════════
+const GROUPS = [
+  { label:'📱 iPad Booth', items:[
+    { id:'classic',       name:'Classic',       sub:'2 Hours · Casual Events',       total:250, dep:100, inc:'2 hours of coverage, 1 photo template, standard props, digital photos, choice of backdrop, professional attendant' },
+    { id:'classicplus',   name:'Classic+',      sub:'4 Hours · Longer Events',       total:350, dep:140, inc:'4 hours of coverage, 1 photo template, standard props, digital photos, choice of backdrop, professional attendant' },
+    { id:'elite',         name:'Elite',         sub:'2 Hours · Themed Events',       total:375, dep:150, inc:'2 hours of coverage, multiple templates, tailored props, full digital gallery, choice of backdrop, professional attendant' },
+    { id:'eliteplus',     name:'Elite+',        sub:'4 Hours · Weddings & Quinces',  total:450, dep:180, inc:'4 hours of coverage, multiple templates, tailored props, full digital gallery, choice of backdrop, professional attendant' },
+  ]},
+  { label:'📷 Studio Booth — Canon EOS R8', items:[
+    { id:'premium',       name:'Premium',       sub:'3 Hours · DSLR Quality',        total:449, dep:175, inc:'3 hours of coverage, Canon EOS R8 camera, 1 photo template, standard props, digital photos, choice of backdrop' },
+    { id:'premiumplus',   name:'Premium+',      sub:'4 Hours · Extended Coverage',   total:549, dep:220, inc:'4 hours of coverage, Canon EOS R8 camera, 1 photo template, standard props, digital photos, choice of backdrop' },
+    { id:'signature',     name:'Signature',     sub:'3 Hours · Upscale Events',      total:549, dep:220, inc:'3 hours of coverage, Canon EOS R8 camera, multiple templates, tailored props, full digital gallery, choice of backdrop' },
+    { id:'signatureplus', name:'Signature+',    sub:'4 Hours · Weddings & Galas',    total:649, dep:260, inc:'4 hours of coverage, Canon EOS R8 camera, multiple templates, tailored props, full digital gallery, choice of backdrop' },
+  ]},
+  { label:'', items:[
+    { id:'custom', name:'Custom / Other', sub:'Enter pricing below manually', total:0, dep:0, inc:'' }
+  ]}
+];
+const ALL = GROUPS.flatMap(g => g.items);
+
+let firstPkg = null;
+const pkgList = document.getElementById('pkgList');
+GROUPS.forEach(g => {
+  if (g.label) {
+    const h = document.createElement('div');
+    h.className = 'cat-header';
+    h.textContent = g.label;
+    pkgList.appendChild(h);
+  }
+  g.items.forEach(pkg => {
+    if (!firstPkg) firstPkg = pkg;
+    const card = document.createElement('div');
+    card.className = 'pkg-card' + (pkg === firstPkg ? ' sel' : '');
+    card.dataset.id = pkg.id;
+    card.innerHTML = `<div class="pkg-radio"></div><div class="pkg-info"><div class="pkg-nm">${pkg.name}</div><div class="pkg-sb">${pkg.sub}</div></div>${pkg.total ? `<div class="pkg-pr">$${pkg.total}</div>` : '<div style="font-size:0.62rem;color:var(--text-dim)">Manual</div>'}`;
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.pkg-card').forEach(c => c.classList.remove('sel'));
+      card.classList.add('sel');
+      if (pkg.total) { document.getElementById('fTotal').value = pkg.total; document.getElementById('fDeposit').value = pkg.dep; autoBalance(); }
+      refresh();
+    });
+    pkgList.appendChild(card);
+  });
+});
+if (firstPkg) { document.getElementById('fTotal').value = firstPkg.total; document.getElementById('fDeposit').value = firstPkg.dep; autoBalance(); }
+
+function autoBalance() {
+  const t = parseFloat(document.getElementById('fTotal').value)||0;
+  const d = parseFloat(document.getElementById('fDeposit').value)||0;
+  document.getElementById('fBalance').value = Math.max(0,t-d).toFixed(0);
+}
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fmtDate(v){ if(!v) return ''; const [y,m,d]=v.split('-'); return `${MONTHS[parseInt(m)-1]} ${parseInt(d)}, ${y}`; }
+function fmtTime(v){ if(!v) return ''; const [hh,mm]=v.split(':'); const h=parseInt(hh); return `${h>12?h-12:h||12}:${mm} ${h>=12?'PM':'AM'}`; }
+
+const BASE = window.location.origin + window.location.pathname.replace('admin.html','') + 'sign.html';
+let URL_ = '', DATA = {};
+
+function refresh() {
+  const name=document.getElementById('fName').value.trim();
+  const email=document.getElementById('fEmail').value.trim();
+  const date=document.getElementById('fDate').value;
+  const venue=document.getElementById('fVenue').value.trim();
+  const ready = name && date && venue;
+
+  if (!ready) {
+    document.getElementById('urlBox').textContent='Fill in name, date & venue to generate link…';
+    document.getElementById('urlBox').classList.remove('ready');
+    document.getElementById('sendBtn').disabled=true;
+    document.getElementById('copyBtn').disabled=true;
+    setSec(false);
+    document.getElementById('sumBox').style.display='none';
+    document.getElementById('sumHint').style.display='block';
+    return;
+  }
+
+  const sel = document.querySelector('.pkg-card.sel');
+  const pkg = ALL.find(p=>p.id===sel?.dataset.id)||firstPkg;
+  const phone=document.getElementById('fPhone').value.trim();
+  const type=document.getElementById('fType').value;
+  const time=document.getElementById('fTime').value;
+  const dur=document.getElementById('fDur').value;
+  const total=document.getElementById('fTotal').value||'0';
+  const deposit=document.getElementById('fDeposit').value||'0';
+  const balance=document.getElementById('fBalance').value||'0';
+  const notes=document.getElementById('fNotes').value.trim();
+  const nd=fmtDate(date), nt=fmtTime(time);
+
+  const params = new URLSearchParams({name,phone,email,date:nd,type,venue,time:nt,duration:dur,package:pkg.name,includes:pkg.inc,total,deposit,balance,notes});
+  URL_ = `${BASE}?${params.toString()}`;
+  DATA = {name,phone,email,date:nd,type,venue,time:nt,duration:dur,package:pkg.name,total,deposit,balance,notes};
+
+  const disp = URL_.length>70 ? URL_.slice(0,70)+'…' : URL_;
+  document.getElementById('urlBox').textContent=disp;
+  document.getElementById('urlBox').classList.add('ready');
+
+  document.getElementById('sendBtn').disabled = !(email && isConfigured);
+  document.getElementById('copyBtn').disabled = false;
+  setSec(true, name, email, phone, nd);
+
+  document.getElementById('s-name').textContent=name;
+  document.getElementById('s-email').textContent=email||'—';
+  document.getElementById('s-date').textContent=nd;
+  document.getElementById('s-pkg').textContent=pkg.name;
+  document.getElementById('s-total').textContent=`$${total}`;
+  document.getElementById('s-bal').textContent=`$${balance}`;
+  document.getElementById('sumBox').style.display='block';
+  document.getElementById('sumHint').style.display='none';
+}
+
+function setSec(on, name='',email='',phone='',date='') {
+  const prev=document.getElementById('prevBtn'),sms=document.getElementById('smsBtn'),ml=document.getElementById('mlBtn');
+  [prev,sms,ml].forEach(el=>{ el.style.pointerEvents=on?'auto':'none'; el.style.opacity=on?'1':'0.28'; });
+  if (on && URL_) {
+    prev.href=URL_;
+    sms.href=`sms:${phone}?body=${encodeURIComponent(`Hi ${name}! Here's your TJ Selfie Station agreement for ${date}. Please sign here: ${URL_}`)}`;
+    ml.href=`mailto:${email}?subject=${encodeURIComponent('Your TJ Selfie Station Agreement is Ready ✍️')}&body=${encodeURIComponent(`Hi ${name},\n\nYour rental agreement is ready to sign:\n${URL_}\n\n– Anthony\nTJ Selfie Station`)}`;
+  }
+}
+
+async function sendToClient() {
+  if (!URL_ || !DATA.email) return;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled=true; btn.textContent='⏳ Sending…';
+
+  try {
+    await emailjs.send(CFG.SERVICE_ID, CFG.INVITE_TEMPLATE, {
+      to_email: DATA.email,
+      to_name:  DATA.name,
+      client_name: DATA.name,
+      event_date:  DATA.date,
+      event_type:  DATA.type,
+      venue:       DATA.venue,
+      start_time:  DATA.time,
+      duration:    DATA.duration,
+      package:     DATA.package,
+      total:       DATA.total,
+      deposit:     DATA.deposit,
+      balance:     DATA.balance,
+      sign_link:   URL_,
+      email_html:  buildEmail(),
+    });
+    btn.textContent='✉ Send Agreement to Client';
+    const box=document.getElementById('sentBox');
+    box.classList.add('show');
+    document.getElementById('sentTo').textContent=`Sent to ${DATA.email}`;
+    showToast(`✓ Sent to ${DATA.name}`,'g');
+    setTimeout(()=>box.classList.remove('show'),6000);
+  } catch(e) {
+    btn.disabled=false; btn.textContent='✉ Send Agreement to Client';
+    showToast('Failed — check EmailJS config','a');
+  }
+}
+
+function copyLink() {
+  if (!URL_) return;
+  navigator.clipboard.writeText(URL_).then(()=>showToast('✓ Link copied!','a'));
+}
+
+function showToast(msg, type) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type}`;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ══════════════════════════════════════════════════════
+// CLIENT EMAIL HTML
+// In EmailJS template body, use: {{{email_html}}}
+// (triple braces = renders as HTML, not escaped text)
+// ══════════════════════════════════════════════════════
+function buildEmail() {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
+<body style="margin:0;padding:0;background:#f0ede8;font-family:Georgia,serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0ede8;padding:36px 0;">
+<tr><td align="center">
+<table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
+
+<tr><td style="background:#0c0c0c;border-radius:12px 12px 0 0;padding:32px 36px;text-align:center;">
+  <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:5px;text-transform:uppercase;color:#C9A84C;font-weight:700;">TJ SELFIE STATION</div>
+  <div style="width:36px;height:1px;background:#C9A84C;margin:10px auto;opacity:0.5;"></div>
+  <div style="font-family:Arial,sans-serif;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#5a5040;">Rental Agreement</div>
+</td></tr>
+
+<tr><td style="background:#111;padding:32px 36px 24px;border-top:1px solid rgba(201,168,76,0.12);">
+  <p style="margin:0 0 8px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#7a6a50;font-family:Arial,sans-serif;">Your Agreement is Ready</p>
+  <h1 style="margin:0 0 14px;font-family:Georgia,serif;font-size:26px;font-weight:400;color:#e8e0d0;">Hi ${DATA.name.split(' ')[0]},</h1>
+  <p style="margin:0;font-size:14px;color:#9a9080;line-height:1.75;font-family:Arial,sans-serif;">Your rental agreement with TJ Selfie Station is ready. Please take a moment to review and sign — it only takes a minute.</p>
+</td></tr>
+
+<tr><td style="background:#161616;padding:0 36px 28px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#1e1e1e;border:1px solid rgba(201,168,76,0.14);border-radius:10px;margin-top:20px;overflow:hidden;">
+    <tr><td style="padding:16px 22px;border-bottom:1px solid rgba(255,255,255,0.05);">
+      <span style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#7a6230;font-family:Arial,sans-serif;font-weight:700;">Event Details</span>
+    </td></tr>
+    <tr><td style="padding:18px 22px;">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td width="50%" style="padding-bottom:14px;vertical-align:top;">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5a5040;font-family:Arial,sans-serif;margin-bottom:4px;">Date</div>
+            <div style="font-family:Georgia,serif;font-size:15px;color:#E2C97E;">${DATA.date}</div>
+          </td>
+          <td width="50%" style="padding-bottom:14px;vertical-align:top;">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5a5040;font-family:Arial,sans-serif;margin-bottom:4px;">Event</div>
+            <div style="font-family:Georgia,serif;font-size:15px;color:#e8e0d0;">${DATA.type}</div>
+          </td>
+        </tr>
+        <tr><td colspan="2" style="padding-bottom:14px;vertical-align:top;">
+          <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5a5040;font-family:Arial,sans-serif;margin-bottom:4px;">Venue</div>
+          <div style="font-family:Georgia,serif;font-size:15px;color:#e8e0d0;">${DATA.venue}</div>
+        </td></tr>
+        <tr>
+          <td width="50%" style="vertical-align:top;">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5a5040;font-family:Arial,sans-serif;margin-bottom:4px;">Start Time</div>
+            <div style="font-family:Georgia,serif;font-size:15px;color:#e8e0d0;">${DATA.time} · ${DATA.duration}</div>
+          </td>
+          <td width="50%" style="vertical-align:top;">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#5a5040;font-family:Arial,sans-serif;margin-bottom:4px;">Package</div>
+            <div style="font-family:Georgia,serif;font-size:15px;color:#e8e0d0;">${DATA.package}</div>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+    <tr><td style="padding:14px 22px;border-top:1px solid rgba(255,255,255,0.05);background:rgba(201,168,76,0.04);">
+      <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="font-size:12px;color:#7a7060;font-family:Arial,sans-serif;">Total</td>
+          <td align="right" style="font-family:Georgia,serif;font-size:15px;color:#e8e0d0;">$${DATA.total}</td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;color:#7a7060;font-family:Arial,sans-serif;padding-top:6px;">Balance Due at Setup</td>
+          <td align="right" style="font-family:Georgia,serif;font-size:15px;color:#e07070;padding-top:6px;">$${DATA.balance}</td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</td></tr>
+
+<tr><td style="background:#161616;padding:0 36px 36px;text-align:center;">
+  <a href="${URL_}" style="display:inline-block;margin:4px 0 16px;padding:17px 44px;background:linear-gradient(135deg,#7a5218,#C9A84C,#E2C97E);color:#060606;text-decoration:none;font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:8px;box-shadow:0 4px 20px rgba(201,168,76,0.28);">Review &amp; Sign Agreement →</a>
+  <p style="margin:0;font-size:10px;color:#3a3028;font-family:Arial,sans-serif;">Link not working? Copy into your browser:</p>
+  <p style="margin:5px 0 0;font-size:9px;color:#5a5040;font-family:Arial,sans-serif;word-break:break-all;">${URL_}</p>
+</td></tr>
+
+<tr><td style="background:#0a0a0a;border-radius:0 0 12px 12px;padding:22px 36px;text-align:center;border-top:1px solid rgba(201,168,76,0.1);">
+  <p style="margin:0 0 4px;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#C9A84C;font-family:Arial,sans-serif;font-weight:700;">TJ SELFIE STATION</p>
+  <p style="margin:0 0 6px;font-size:9px;color:#3a3028;font-family:Arial,sans-serif;letter-spacing:1px;">Boston &amp; Greater Boston Area</p>
+  <p style="margin:0;font-size:9px;color:#3a3028;font-family:Arial,sans-serif;">Questions? Reply to this email or contact us directly.</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body></html>`;
+}
+</script>
+</body>
+</html>
