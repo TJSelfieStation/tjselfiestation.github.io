@@ -132,6 +132,70 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
+/* ── SCROLL PROGRESS ── */
+#q-progress{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--gold),var(--gold-light));z-index:9999;transition:width .15s linear;box-shadow:0 0 8px rgba(201,168,76,.6)}
+
+/* ── GOLD GLOW TEXT ── */
+@keyframes goldGlow{0%,100%{color:var(--gold);text-shadow:0 0 0 rgba(201,168,76,0)}50%{color:var(--gold-light);text-shadow:0 0 20px rgba(201,168,76,.45),0 0 40px rgba(201,168,76,.2)}}
+.intro h1 i{color:var(--gold);animation:goldGlow 3.5s ease-in-out infinite;font-style:italic}
+
+/* ── TILE SELECTION BURST ── */
+@keyframes tilePop{0%{transform:scale(1)}40%{transform:scale(0.96)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
+.tile.sel{animation:tilePop .3s ease-out}
+.tile{transition:border-color .2s,background .2s,transform .2s,box-shadow .2s}
+.tile:hover{transform:translateY(-2px) scale(1.01);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.tile.sel{box-shadow:0 0 0 1px var(--gold),0 8px 32px rgba(201,168,76,.18)!important}
+
+/* ── CARD SLIDE TRANSITION ── */
+@keyframes slideInRight{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:translateX(0)}}
+.card.slide-in{animation:slideInRight .4s cubic-bezier(.22,1,.36,1) both}
+.card.slide-in-back{animation:slideInLeft .4s cubic-bezier(.22,1,.36,1) both}
+
+/* ── PROGRESS DOT PULSE ── */
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}70%{box-shadow:0 0 0 10px rgba(201,168,76,0)}}
+.prog-dot.active .prog-dot-circle{animation:dotPulse 1.8s ease-out infinite}
+
+/* ── CONNECTOR FILL ANIMATION ── */
+.prog-connector-fill{transition:width .6s cubic-bezier(.4,0,.2,1)!important}
+
+/* ── FIELD FOCUS GLOW ── */
+.field input{transition:border-color .25s,background .25s,box-shadow .25s}
+.field input:focus{box-shadow:0 0 0 3px rgba(201,168,76,.12);border-color:rgba(201,168,76,.55)!important}
+
+/* ── BTN NEXT RIPPLE ── */
+.btn-next,.btn-submit{position:relative;overflow:hidden}
+.btn-next::after,.btn-submit::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.25);width:0;height:0;top:50%;left:50%;transform:translate(-50%,-50%);transition:width .5s,height .5s,opacity .5s;opacity:0;pointer-events:none}
+.btn-next:active::after,.btn-submit:active::after{width:300px;height:300px;opacity:0}
+
+/* ── PULSE RING ON BTN-NEXT ── */
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(201,168,76,.4)}70%{box-shadow:0 0 0 10px rgba(201,168,76,0)}100%{box-shadow:0 0 0 0 rgba(201,168,76,0)}}
+.btn-next:not(:disabled){animation:pulseRing 2.5s ease-out infinite}
+.btn-submit:not(:disabled){animation:pulseRing 2.5s ease-out infinite}
+
+/* ── SUCCESS CONFETTI ── */
+.confetti-piece{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:9999;animation:confettiFall var(--dur) var(--delay) ease-in forwards}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+/* ── SUCCESS CARD GLOW ── */
+.success-card{animation:fadeUp .5s both,successGlow 3s 0.5s ease-out forwards}
+@keyframes successGlow{0%{box-shadow:0 0 0 rgba(201,168,76,0)}50%{box-shadow:0 0 60px rgba(201,168,76,.2)}100%{box-shadow:0 0 30px rgba(201,168,76,.1)}}
+
+/* ── EYEBROW DIVIDERS ANIMATE ── */
+.eyebrow::before,.eyebrow::after{transition:width .6s ease}
+.intro.visible .eyebrow::before,.intro.visible .eyebrow::after{width:40px}
+.eyebrow::before,.eyebrow::after{width:0!important}
+
+/* ── NAV SCROLL SHRINK ── */
+nav.scrolled{padding:.7rem 1.5rem!important;background:rgba(4,6,15,.98)!important;box-shadow:0 4px 30px rgba(0,0,0,.4)}
+
+/* ── BACK LINK HOVER ── */
+.back-link{transition:color .2s,gap .2s}
+.back-link:hover{gap:.8rem}
+
+/* ── CURSOR GLOW ── */
+#cursor-glow-q{position:fixed;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle,rgba(201,168,76,.2) 0%,transparent 70%);pointer-events:none;z-index:9998;transform:translate(-50%,-50%);mix-blend-mode:screen;transition:opacity .3s}
+
 @media(max-width:640px){
   nav{padding:1rem 1.5rem}
   .page{padding:6.5rem 1rem 4rem}
@@ -148,6 +212,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 </style>
 </head>
 <body>
+<div id="q-progress"></div>
+<div id="cursor-glow-q"></div>
 <div class="bg"></div>
 
 <nav>
@@ -198,7 +264,7 @@ const PKGS = [
   {booth:'studio',hrs:4,price:649,name:'Signature+',tag:'Best We Offer',tagline:'The full experience — the best we offer, period',feats:['4 hrs of coverage','Canon EOS R8','Multiple templates','Tailored props','Full digital gallery','Choice of backdrop']},
 ];
 
-const A = {eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,guests:null,name:'',phone:'',email:'',notes:''};
+const A = {eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,prints:'no',guests:null,name:'',phone:'',email:'',notes:''};
 let step = 0;
 const TOTAL = 4;
 const EL = {wedding:'Wedding / Gala',quince:'Quinceañera / Sweet 16',birthday:'Birthday Party',corporate:'Corporate Event',grad:'Graduation',other:'Other Celebration'};
@@ -305,7 +371,7 @@ function render(){
   if(!s) return;
 
   const isLast = step === TOTAL - 1;
-  let nd = step===0?!A.eventType:step===1?!(A.booth&&A.hrs):step===2?!(A.date&&A.startTime&&A.venue.trim()&&A.guests):false;
+  let nd = step===0?!A.eventType:step===1?!(A.booth&&A.hrs):step===2?!(A.date&&A.startTime&&A.venue.trim()&&A.prints&&A.guests):false;
 
   document.getElementById('quiz').innerHTML = `
     <div class="card">
@@ -335,7 +401,7 @@ function chk2(){const ok=A.date&&A.startTime&&A.venue.trim()&&A.guests;const b=d
 function chk3(){const ok=A.name.trim()&&A.phone.trim();const b=document.getElementById('btnSubmit');if(b)b.disabled=!ok}
 function advance(){step++;render();window.scrollTo({top:0,behavior:'smooth'})}
 function goBack(){step--;render();window.scrollTo({top:0,behavior:'smooth'})}
-function restart(){step=0;Object.assign(A,{eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,guests:null,name:'',phone:'',email:'',notes:''});render();window.scrollTo({top:0,behavior:'smooth'})}
+function restart(){step=0;Object.assign(A,{eventType:null,date:'',startTime:'',venue:'',booth:null,hrs:null,prints:'no',guests:null,name:'',phone:'',email:'',notes:''});render();window.scrollTo({top:0,behavior:'smooth'})}
 
 /* ── PACKAGE MATCH ── */
 function matchPkg(){
@@ -376,7 +442,7 @@ async function submitForm(){
         'Venue':A.venue,
         'Booth':BL[A.booth]||A.booth,
         'Duration':`${A.hrs} hours`,
-        'Guests': A.guests,
+        'Prints':A.prints==='yes'?'Yes — Prints + Digital':'Digital Only',
         'Guest Count':A.guests,
         'Recommended Package':pkg?`${pkg.name} — $${pkg.price}`:'To be determined',
         'Notes':A.notes||'(none)',
@@ -412,7 +478,7 @@ function showSuccess(pkg){
 /* ── ERROR FALLBACK ── */
 function showError(pkg,msg){
   updateProgress(true);
-  const lines=[`Hi Anthony! Quote request from your website.`,'',`Name: ${A.name}`,`Phone: ${A.phone}`,`Event: ${EL[A.eventType]||A.eventType}`,`Date: ${fmtDate(A.date)} at ${fmtTime(A.startTime)}`,`Venue: ${A.venue}`,`Booth: ${BL[A.booth]||A.booth}`,`Duration: ${A.hrs} hours`,`Guests: ${A.guests}`,pkg?`Package: ${pkg.name} — $${pkg.price}`:'',A.notes?`Notes: ${A.notes}`:''].filter(Boolean).join('\n').trim();
+  const lines=[`Hi Anthony! Quote request from your website.`,'',`Name: ${A.name}`,`Phone: ${A.phone}`,`Event: ${EL[A.eventType]||A.eventType}`,`Date: ${fmtDate(A.date)} at ${fmtTime(A.startTime)}`,`Venue: ${A.venue}`,`Booth: ${BL[A.booth]||A.booth}`,`Duration: ${A.hrs} hours`,`Prints: ${A.prints==='yes'?'Yes — Prints + Digital':'Digital Only'}`,`Guests: ${A.guests}`,pkg?`Package: ${pkg.name} — $${pkg.price}`:'',A.notes?`Notes: ${A.notes}`:''].filter(Boolean).join('\n').trim();
   const isA=/android/i.test(navigator.userAgent);
   const sms=`sms:+17816328313${isA?'?':'&'}body=${encodeURIComponent(lines)}`;
   const mail=`mailto:tjselfiestation@gmail.com?subject=${encodeURIComponent('Quote Request — '+A.name)}&body=${encodeURIComponent(lines)}`;
@@ -442,8 +508,84 @@ function updateProgress(allDone){
   }
 }
 
-/* ── PARTICLES ── */
-for(let i=0;i<22;i++){const s=document.createElement('div');s.className='spark';const sz=1+Math.random()*2;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${4+Math.random()*7}s;--del:${Math.random()*9}s`;document.body.appendChild(s);}
+
+// ── SCROLL PROGRESS ──
+const qBar = document.getElementById('q-progress');
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100 || 0;
+  if(qBar) qBar.style.width = Math.min(pct, 100) + '%';
+}, { passive: true });
+
+// ── NAV SHRINK ──
+const qNav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  qNav && (window.scrollY > 40 ? qNav.classList.add('scrolled') : qNav.classList.remove('scrolled'));
+}, { passive: true });
+
+// ── CURSOR GLOW ──
+const cg = document.getElementById('cursor-glow-q');
+if(window.matchMedia('(pointer:fine)').matches && cg){
+  document.addEventListener('mousemove', e => {
+    cg.style.left = e.clientX+'px';
+    cg.style.top  = e.clientY+'px';
+    cg.style.opacity = '1';
+  });
+  document.addEventListener('mouseleave', () => cg.style.opacity = '0');
+}
+
+// ── SLIDE TRANSITION WRAPPER ──
+let _lastDir = 'forward';
+const _origAdvance = advance;
+const _origGoBack  = goBack;
+advance = function(){
+  _lastDir = 'forward';
+  _origAdvance();
+  const card = document.querySelector('#quiz .card');
+  if(card){ card.classList.add('slide-in'); }
+};
+goBack = function(){
+  _lastDir = 'back';
+  _origGoBack();
+  const card = document.querySelector('#quiz .card');
+  if(card){ card.classList.add('slide-in-back'); }
+};
+
+// ── EYEBROW ANIMATE ON LOAD ──
+setTimeout(() => {
+  const intro = document.querySelector('.intro');
+  if(intro) intro.classList.add('visible');
+}, 300);
+
+// ── CONFETTI ON SUCCESS ──
+function launchConfetti(){
+  const colors = ['#c9a84c','#e8c96a','#fff8e7','#f5f0e8','#b8942e'];
+  for(let i=0;i<80;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    el.style.cssText = `left:${Math.random()*100}vw;background:${color};--dur:${1.2+Math.random()*1.8}s;--delay:${Math.random()*0.8}s;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+  }
+}
+
+// Patch showSuccess to trigger confetti
+const _origShowSuccess = showSuccess;
+showSuccess = function(pkg){
+  _origShowSuccess(pkg);
+  launchConfetti();
+};
+
+// ── TILE RIPPLE FEEDBACK ──
+document.addEventListener('click', function(e){
+  const tile = e.target.closest('.tile');
+  if(tile){
+    tile.style.animation = 'none';
+    void tile.offsetWidth; // reflow
+    tile.style.animation = '';
+  }
+});
 
 render();
 </script>
